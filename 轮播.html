@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="stylesheet" href="">
+    <style type="text/css" media="screen">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .clear:after {
+        content: '';
+        height: 0;
+        display: block;
+        overflow: hidden;
+        clear: both;
+    }
+    
+    .container {
+        width: 490px;
+        height: 170px;
+        margin: 30px auto;
+        position: relative;
+    }
+    
+    .container img {
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        display: none;
+    }
+    
+    ul {
+        width: 210px;
+        margin: 0 auto;
+    }
+    
+    li {
+        list-style: none;
+        float: left;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        background-color: #ccc;
+        margin-left: 5px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="left: -1200">
+        <img src="images/img1.jpg" alt="" style="display: block;">
+        <img src="images/img2.jpg" alt="">
+        <img src="images/img3.jpg" alt="">
+        <img src="images/img4.jpg" alt="">
+        <img src="images/img5.jpg" alt="">
+        <img src="images/img6.jpg" alt="">
+    </div>
+    <ul class="icon clear">
+        <li value='0' style="background: red">1</li>
+        <li value='1'>2</li>
+        <li value='2'>3</li>
+        <li value='3'>4</li>
+        <li value='4'>5</li>
+        <li value='5'>6</li>
+    </ul>
+    <script>
+    window.onload = function() {
+        var imageList = document.getElementsByTagName('img');
+        var liList =  document.getElementsByTagName('li');
+        var showIndex = 0; // 
+        var timer = null;
+
+        // 显示指定的图片，其它隐藏
+        function dealSlideImg(){
+        	// document.getElementsByTagName('div')[0].style.left = -showIndex * '图片宽度';
+        	for (var i = 0; i < imageList.length; i++) {
+                if (showIndex == i) {
+                    imageList[i].style.display = 'block';
+                    liList[i].style.background = 'red';
+                } else {
+                    imageList[i].style.display = 'none';
+                    liList[i].style.background = '';
+                }
+            }
+        }
+
+        function mySlideImg(){
+        	if( timer ){
+	        	clearInterval( timer )
+	        }
+            dealSlideImg();
+            timer = setInterval(function() {
+                showIndex++;
+                if (showIndex == 6) {
+                    showIndex = 0;
+                }
+                dealSlideImg();
+            }, 1200);
+        }
+
+        mySlideImg();
+        // 事件委托
+        document.querySelector('.icon').addEventListener('click', function(ev) {
+            var _event = ev || window.event;
+            var liNode = _event.target;
+            var curIndex = liNode.value;
+            showIndex = curIndex;
+            mySlideImg();
+
+        });
+
+    }
+    </script>
+</body>
+
+</html>

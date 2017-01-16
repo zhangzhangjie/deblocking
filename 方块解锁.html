@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		*{
+			margin: 0px;
+			padding: 0px;
+		}
+		.iphone{
+			width: 426px;
+			height: 640px;
+			margin:0px auto;
+			position: relative;
+			background: url(images/iphone.jpg) no-repeat;
+		}
+		.moveArea{
+			position: absolute;
+			bottom: 33px;
+			width: 358px;
+			height: 62px;
+			left: 50%;
+			margin-left: -179px;
+		}
+		.locker{
+			position: absolute;
+			width: 93px;
+			height: 62px;
+			top: 0px;
+			left: 0px;
+			background: url(images/unlock_btn.jpg) no-repeat;
+		}
+	</style>
+</head>
+<body>
+	<div class="iphone">
+		<div class="moveArea">
+			<div class="locker"></div>
+		</div>
+	</div>
+	<script>
+		window.onload = function(){
+			var lockerElement = document.getElementsByClassName('locker')[0];
+
+			var downFlag = false;
+			var offsetX = 0;
+			lockerElement.onmousedown = function(ev){
+				downFlag = true;
+				//计算鼠标相对于滑块的偏移
+				var e = ev || event;
+				//计算偏移
+				offsetX = e.offsetX;
+			}
+			lockerElement.onmousemove = function(ev){
+                if (downFlag) {
+                	//this.style.left = clientX-offsetX-moveArea.offsetLeft-iphone.offsetLeft
+
+                    //this.parentNode == moveArea 节点
+                    // this.parentNode.parentNode == iphone 节点
+                    var e = ev ||event;
+                    var clientX = e.clientX;
+                    var leftValue = clientX - offsetX - this.parentNode.offsetLeft - this.parentNode.parentNode.offsetLeft;
+                    //修正leftValue
+                    if (leftValue < 0) {
+                    	leftValue = 0;
+                    }
+                    //如果leftValue大于moveArea的宽度-locker的宽度，修正为该值
+                    if (leftValue>(this.parentNode.offsetWidth - this.offsetWidth)) {
+                    	leftValue = this.parentNode.offsetWidth - this.offsetWidth;
+                    }
+
+
+                	this.style.left = leftValue + 'px';
+                }
+			}
+			document.onmouseup = lockerElement.onmouseup = function(ev){
+
+				//判断当前滑块的中心点和移动区域的中心点
+				//如果超过移动区域的中心点，以动画的方式移动到最右边
+				//否则以动画的方式移动到最左边
+				//
+				var lockerCenter = lockerElement.offsetLeft + lockerElement.offsetWidth/2;
+				var moveAreaCenter = lockerElement.parentNode.offsetWidth/2;
+				var endPos = ( lockerElement.parentNode.offsetWidth -  lockerElement.offsetWidth) + 'px';
+
+				if (lockerCenter > moveAreaCenter) {
+					
+					startMove(lockerElement,endPos);
+				}else{
+					startMove(lockerElement,'0px');
+				}
+				downFlag = false;
+			}
+			function startMove(element,endPos){
+				clearInterval(element.timer);
+				element.timer = setInterval(function(){
+                    var currentLeft = element.offsetLeft;
+                    var speed = (parseInt(endPos) - parseInt(currentLeft))/4;
+                    speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                    element.style.left = (currentLeft + speed) + 'px';
+                    if (element.style.left == endPos) {
+                    	clearInterval(element.timer);
+                    }
+				},100)
+			}
+		}
+	</script>
+</body>
+</html>

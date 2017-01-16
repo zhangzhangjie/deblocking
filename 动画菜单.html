@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		*{margin: 0;padding: 0;}
+		.box{
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			width: 205px;
+			height: 357px;
+			overflow: hidden;
+		}
+		.top{
+			background: url(images/4.png) no-repeat;
+			top: 357px;
+			left: 0px;
+			width: 205px;
+			height: 312px;
+			position: absolute;
+			width: 100%;
+			background-size: 205px 312px;
+		}
+		.bottom{
+			background: url(images/1.png);
+			position: absolute;
+			width: 100%;
+			height: 45px;
+			left: 205px;
+			bottom: 0px;
+
+		}
+		.button{
+			position: absolute;
+			bottom:0px;
+			right: 0px;
+			background: url(images/2.png) no-repeat;
+			width: 30px;
+			height: 49px;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<div class="top"></div>
+		<div class="bottom"></div>
+		<div class="button"></div>
+	</div>
+	<script>
+		window.onload = function(){
+			var buttonElement = document.getElementsByClassName('button')[0];
+			var bottomElement = document.getElementsByClassName('bottom')[0];
+			var topElement = document.getElementsByClassName('top')[0];
+			buttonElement.onclick = function(){
+				//bottom 向左移动，移动完毕后，top向上移动
+				//在startMove中添加一个函数，作为动画结束后再调用的函数
+				startMove(bottomElement,'left','0px',function(){
+					//把top移动到0位置
+					startMove(topElement,'top','0px');
+				});
+			}
+			topElement.onclick = function(){
+				//把top向下移动，移动完毕后，bottom向右移动
+				startMove(topElement,'top','357px',function(){
+					startMove(bottomElement,'left','205px',null);
+				})
+			}
+
+            //element 哪个元素需要移动
+            //attribute 元素的哪个属性
+            //endValue  元素需要移动的属性的最终值
+            //callback  动画结束后调用的函数
+			function startMove(element,attribute,endValue,callback){
+               clearInterval(element.timer);
+               element.timer = setInterval(function(){
+                  var currentValue = getStyleValue(element,attribute);
+                  var speed =( parseInt(endValue) - parseInt(currentValue))/6;
+                  speed = speed > 0 ? Math.ceil(speed):Math.floor(speed);
+
+                  //修改属性的值
+                  element.style[attribute] = (parseInt(currentValue) + speed)+'px';
+                  if (element.style[attribute] == endValue) {
+                  	clearInterval(element.timer);
+                  	if (callback) {
+                  		callback();
+                  	}
+                  }
+
+               },40)
+			}
+
+			function getStyleValue(element,styleName){
+				if (element.currentStyle) {
+					return element.currentStyle[styleName];
+				}else{
+					return getComputedStyle(element,null)[styleName];
+				}
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		*{
+			margin:0px;
+			padding: 0px;
+		}
+		.clear:after{
+			content: "";
+			display: block;
+			overflow: hidden;
+			clear: both;
+			height: 0px;
+		}
+		.box{
+           width: 490px;
+           height: 170px;
+           margin: 100px auto;
+           position: relative;
+           overflow: hidden;
+		}
+		.container{
+			width: 3430px;
+			height: 170px;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+		.container>img{
+			float: left;
+		}
+		.indicator{
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+		}
+		.indicator>ul>li{
+			float: left;
+			width: 30px;
+			height: 30px;
+			margin-left: 5px;
+			background: rgba(0,0,0,.4);
+			text-align: center;
+			line-height: 30px;
+			color:#fff;
+			list-style: none;
+		}
+		.indicator .active{
+			background-color: #f00;
+			color: yellow;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<div class="container clear">
+			<img src="images/img1.jpg" alt="">
+			<img src="images/img2.jpg" alt="">
+			<img src="images/img3.jpg" alt="">
+			<img src="images/img4.jpg" alt="">
+			<img src="images/img5.jpg" alt="">
+			<img src="images/img6.jpg" alt="">
+			<img src="images/img1.jpg" alt="">
+		</div>
+		<div class="indicator">
+			<ul class="clear">
+				<li class="active">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+				<li>6</li>
+			</ul>
+		</div>
+	</div>
+
+	<script>
+		var containerEle = document.getElementsByClassName('container')[0];
+
+		var liList = document.querySelectorAll('.indicator>ul>li');
+        var innerTimer = null;
+
+		var outerTimer = setInterval(doMove,2000);
+		var showIndex = 0;
+
+        //以动画的方式把container向左移动 490
+		function doMove(){
+
+			showIndex++;
+			//高亮显示showIndex对应的li元素
+             showActive(showIndex);
+            //使用变量保存最终的位置
+            var endPos = containerEle.offsetLeft - 490;
+            clearInterval(innerTimer);
+
+
+			innerTimer = setInterval(function(){
+                var currentLeft = containerEle.offsetLeft;
+                currentLeft -= 10;
+                containerEle.style.left = currentLeft + 'px';
+                if (currentLeft <= endPos) {
+                	//停掉定时器
+                	clearInterval(innerTimer);
+
+                	//如果是最后一张，需要重置，回到初始状态
+                    if (showIndex >= 6) {
+                    	showIndex = 0;
+                    	//高亮显示第0张
+                    	showActive(showIndex);
+                    	//把containerEle的left重置为0
+                    	containerEle.style.left = '0px';
+                    }
+
+                }
+			},10)
+		}
+
+		function showActive(index){
+			for (var i = 0; i < liList.length; i++) {
+				if (i == index) {
+					liList[i].className = 'active';
+				}else{
+					liList[i].className = '';
+				}
+			}
+		}
+
+		//对每一个li元素添加onmouseover和onmouseout 的操作
+		for (var i = 0; i < liList.length; i++) {
+			liList[i].index = i;
+			liList[i].onmouseover = function(){
+				clearInterval(outerTimer);
+				clearInterval(innerTimer);
+
+				//移动containerEle 显示当前的li对应的图片
+				showIndex = this.index;
+				showActive(showIndex);
+				containerEle.style.left = -showIndex*490 + 'px'; 
+			}
+			liList[i].onmouseout = function(){
+				outerTimer = setInterval(doMove,2000);
+			}
+		}
+
+	</script>
+</body>
+</html>
